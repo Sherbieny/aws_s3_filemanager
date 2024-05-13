@@ -2,12 +2,41 @@
 const s3Service = require('../services/s3Service');
 
 /**
- * Get all folder and files in a bucket's path
+ * Test controller
  */
-exports.getFolderContents = async (req, res) => {
+exports.test = async (req, res) => {
+    console.log('Test successful 3');
+    const data = await s3Service.listBuckets();
+
+    console.log(data);
+
+    res.json({ message: 'Test successful 3' });
+};
+
+/**
+ * Get all folders in a bucket's path
+ */
+exports.getFolders = async (req, res) => {
     try {
-        const path = req.query.path;
-        const data = await s3Service.getFolderContents(path);
+        console.log('getFolders');
+        const path = req.query.path || process.env.S3_BASE_PATH;
+        console.log(path);
+        const data = await s3Service.getFolders(path);
+
+        res.json(data);
+
+    } catch (error) {
+        res.status(500).json({ error: error.toString() });
+    }
+};
+
+/**
+ * Get all files in a bucket's path
+ */
+exports.getFiles = async (req, res) => {
+    try {
+        const path = req.query.path || process.env.S3_BASE_PATH;
+        const data = await s3Service.getFiles(path);
 
         res.json(data);
 

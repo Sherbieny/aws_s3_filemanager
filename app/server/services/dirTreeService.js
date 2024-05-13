@@ -8,9 +8,10 @@ const crypto = require('crypto');
 const buildDirTree = (foldersPaths) => {
     const folders = {};
 
-    for (const [path, relPath] of Object.entries(foldersPaths)) {
+    foldersPaths.forEach((path) => {
+        console.log('Path:', path);
         // Removing the root path to get the relative path
-        const relativePath = relPath.replace(process.env.S3_BASE_PATH, '');
+        const relativePath = path.replace(process.env.S3_BASE_PATH, '');
 
         // Exploding by "/"
         const parts = relativePath.split('/');
@@ -22,7 +23,7 @@ const buildDirTree = (foldersPaths) => {
             if (!folders[root]) {
                 folders[root] = createFolder(root, process.env.S3_BASE_PATH + root);
             }
-            cur = folders[root].children; // Add the rest under the root folder
+            cur = folders[root].nodes; // Add the rest under the root folder
         } else {
             cur = folders;
         }
@@ -32,17 +33,18 @@ const buildDirTree = (foldersPaths) => {
                 if (!cur[part]) {
                     cur[part] = createFolder(part, path);
                 }
-                cur = cur[part].children;
+                cur = cur[part].nodes;
             }
         }
     }
+    );
 
     return folders;
 }
 
 const createFolder = (name, path) => {
     const uniqueId = 'a' + crypto.randomBytes(4).toString('hex'); // This will generate a unique ID not starting with a zero
-    return { id: uniqueId, name, path, children: {} };
+    return { id: uniqueId, name, path, nodes: {} };
 }
 
 module.exports = {

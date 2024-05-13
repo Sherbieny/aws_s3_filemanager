@@ -1,32 +1,37 @@
 // /server/controllers/s3Controller.js
 const s3 = require('../config/s3');
-const dirTreeService = require('../services/dirTreeService');
+const dirTreeService = require('./dirTreeService');
 
 /**
  * Get all folders in a bucket's path
  */
-const getFolders = async (path, limit, token, allContents = []) => {
-    try {
-        const data = await s3.listObjectsV2({
-            Bucket: process.env.AWS_BUCKET,
-            Prefix: path,
-            ContinuationToken: token,
-            MaxKeys: limit,
-            Delimiter: '/',
-        }).promise();
+const getFolders = async (folderKey) => {
+    const data = {};
+    await getSubFolders(folderKey, data);
+    console.log('finished getting folders');
 
-        allContents = allContents.concat(data.Contents);
+    return dirTreeService.buildDirTree(Object.values(data));
+};
 
-        if (data.IsTruncated) {
-            return getFolders(path, limit, data.NextContinuationToken, allContents);
-        }
+const getSubFolders = async (folderKey, data) => {
+    const delimiter = '/';
+    const result = await s3.listObjects({
+        Bucket: process.env.AWS_BUCKET,
+        Prefix: folderKey,
+        Delimiter: delimiter,
+    }).promise();
 
+    if (result.CommonPrefixes) {
+        const promises = result.CommonPrefixes.map(async (commonPrefix) => {
+            const prefix = commonPrefix.Prefix;
+            data[prefix] = prefix;
+            await getSubFolders(prefix, data);
+        });
 
-        return dirTreeService.buildDirTree(allContents);
-    } catch (error) {
-        return { error: error.toString() };
+        await Promise.all(promises);
     }
 };
+
 
 /**
  * Get all files in a bucket's path
@@ -196,6 +201,15 @@ const updateSortOrderData = async (data) => {
     return { success: true };
 }
 
+const listBuckets = async () => {
+    try {
+        const data = await s3.listBuckets().promise();
+        return data;
+    } catch (error) {
+        return { error: error.toString() };
+    }
+};
+
 
 module.exports = {
     getFolders,
@@ -203,5 +217,6 @@ module.exports = {
     uploadFile,
     createFolder,
     deleteFile,
-    updateSortOrderData
+    updateSortOrderData,
+    listBuckets,
 };
