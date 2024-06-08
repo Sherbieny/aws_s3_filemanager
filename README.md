@@ -1,16 +1,23 @@
-Frontend:
+# Nodejs AWS S3 File manager with sorting capabilities
 
-Create a basic HTML structure in index.html with a sidebar for the folder tree and a main region for folder content.
-Use CSS to style the HTML elements.
-Use JavaScript to handle user interactions like clicking on a folder or file, creating a new folder, deleting a file/folder, and sorting files.
-Backend:
+This is a simple Nodejs application that allows you to manage files in an AWS S3 bucket. It allows you to show folders and files in a bucket, create folders, upload files, and delete files. It also allows you to sort files by dragging and dropping them.
 
-Use the AWS SDK to interact with your S3 bucket.
-Create a route to get the S3 content based on the path.
-Create a route to create a new folder in S3.
-Create a route to upload files to S3.
-Create a route to delete files/folders from S3.
-Create a route to sort files based on the object tag.
-Integration:
+## Installation
 
-Use AJAX or Fetch API in your frontend JavaScript to make requests to your backend routes and update the UI accordingly.
+1. Clone the repository
+2. Run `npm install`
+3. Copy/Rename the `.env.tmp` file to `.env` and fill in the required values
+4. Run `npm start`
+
+## Usage
+
+The application will be running on `http://localhost:3000`. You can access the application by visiting this URL.
+
+## Tools used
+
+- Nodejs
+- Express
+- AWS SDK
+- VSCode
+- Github Copilot
+- Sortablejs
