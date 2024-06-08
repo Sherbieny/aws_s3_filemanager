@@ -9,7 +9,6 @@ const buildDirTree = (foldersPaths) => {
     const folders = {};
 
     foldersPaths.forEach((path) => {
-        console.log('Path:', path);
         // Removing the root path to get the relative path
         const relativePath = path.replace(process.env.S3_BASE_PATH, '');
 

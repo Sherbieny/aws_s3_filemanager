@@ -2,25 +2,11 @@
 const s3Service = require('../services/s3Service');
 
 /**
- * Test controller
- */
-exports.test = async (req, res) => {
-    console.log('Test successful 3');
-    const data = await s3Service.listBuckets();
-
-    console.log(data);
-
-    res.json({ message: 'Test successful 3' });
-};
-
-/**
  * Get all folders in a bucket's path
  */
 exports.getFolders = async (req, res) => {
     try {
-        console.log('getFolders');
         const path = req.query.path || process.env.S3_BASE_PATH;
-        console.log(path);
         const data = await s3Service.getFolders(path);
 
         res.json(data);
@@ -35,7 +21,8 @@ exports.getFolders = async (req, res) => {
  */
 exports.getFiles = async (req, res) => {
     try {
-        const path = req.query.path || process.env.S3_BASE_PATH;
+        const path = decodeURIComponent(req.query.path) || process.env.S3_BASE_PATH;
+
         const data = await s3Service.getFiles(path);
 
         res.json(data);
@@ -109,10 +96,9 @@ exports.getSortOrder = async (req, res) => {
  */
 exports.setSortOrderTag = async (req, res) => {
     try {
-        const path = req.body.path;
-        const sortOrder = req.body.sortOrder;
+        const sortingData = JSON.parse(req.body.sortingData);
 
-        const data = await s3Service.setSortOrderTag(path, sortOrder);
+        const data = await s3Service.updateSortOrderData(sortingData);
 
         res.json(data);
     }

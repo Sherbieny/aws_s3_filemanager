@@ -8,7 +8,6 @@ const dirTreeService = require('./dirTreeService');
 const getFolders = async (folderKey) => {
     const data = {};
     await getSubFolders(folderKey, data);
-    console.log('finished getting folders');
 
     return dirTreeService.buildDirTree(Object.values(data));
 };
@@ -53,6 +52,11 @@ const getFiles = async (path, limit, token, allContents = []) => {
         if (data.IsTruncated) {
             return getFiles(path, limit, data.NextContinuationToken, allContents);
         }
+
+        const baseUrl = process.env.AWS_BASE_URL;
+        allContents.forEach(content => {
+            content.url = `${baseUrl}/${content.Key}`;
+        });
 
         return getSortOrderData(data);
     } catch (error) {
@@ -157,7 +161,6 @@ const setSortOrderTag = async (path, sortOrder) => {
                 ],
             },
         }).promise();
-
         return data;
     }
     catch (error) {
@@ -189,10 +192,8 @@ const getSortOrderData = async (data) => {
  */
 const updateSortOrderData = async (data) => {
     try {
-        if (data.Contents.length > 0) {
-            for (const [path, sortOrder] of Object.entries(data)) {
-                await setSortOrderTag(path, sortOrder);
-            }
+        for (const [path, sortOrder] of Object.entries(data)) {
+            await setSortOrderTag(path, sortOrder);
         }
     } catch (error) {
         return { error: error.toString() };

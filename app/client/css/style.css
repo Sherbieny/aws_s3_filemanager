@@ -32,3 +32,46 @@ p {
 .button:hover {
   background-color: #0056b3;
 }
+
+/* CSS */
+
+li {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li > i {
+    padding-right: 0.2rem;
+}
+
+.folder ul {
+    display: none;
+}
+
+.folder.open > ul {
+    display: block;
+}
+
+.folder.active > i {
+    color: #FFD43B;
+}
+
+.file-list{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.file {
+    margin-bottom: 5%;
+    margin-right: 2%;
+}
+
+.file img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.delete-btn {
+    cursor: pointer;
+}
