@@ -2,7 +2,7 @@
 
 This is a simple Nodejs application that allows you to manage files in an AWS S3 bucket. It allows you to show folders and files in a bucket, create folders, upload files, and delete files. It also allows you to sort files by dragging and dropping them.
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot2.png)
 
 ## Installation
 
